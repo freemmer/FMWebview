@@ -2,9 +2,9 @@ package com.tistory.freemmer.lib.fmwebview
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.net.http.SslError
 import android.os.Build
-import android.webkit.WebSettings
-import android.webkit.WebView
+import android.webkit.*
 import com.tistory.freemmer.lib.fmwebview.client.FMChromeClient
 import com.tistory.freemmer.lib.fmwebview.client.FMWebViewClient
 import com.tistory.freemmer.lib.libfm.logger.FMILog
@@ -18,11 +18,14 @@ import java.net.URLEncoder
  */
 class FMWebview private constructor(
     private val activity: Activity,
-    private val webView: WebView,
+    val webView: WebView,
     private val isDebug: Boolean = false
 ) {
     private var log: FMILog? = null
     private var userAgent: String? = null
+    var pOnReceivedSslError: ((view: WebView, handler: SslErrorHandler, error: SslError) -> Unit)? = null
+    var pOnReceivedError: ((view: WebView?, request: WebResourceRequest?, error: WebResourceError?) -> Unit)? = null
+    var pOnReceivedErrorOld: ((view: WebView, errorCode: Int, description: String, failingUrl: String) -> Unit)? = null
 
 
     companion object {
@@ -37,6 +40,9 @@ class FMWebview private constructor(
                   , init: Builder.() -> Unit
     ) {
         var userAgent: String? = null
+        var pOnReceivedSslError: ((view: WebView, handler: SslErrorHandler, error: SslError) -> Unit)? = null
+        var pOnReceivedError: ((view: WebView?, request: WebResourceRequest?, error: WebResourceError?) -> Unit)? = null
+        var pOnReceivedErrorOld: ((view: WebView, errorCode: Int, description: String, failingUrl: String) -> Unit)? = null
 
         init {
             init()
@@ -45,6 +51,9 @@ class FMWebview private constructor(
         fun build(): FMWebview {
             val webview = FMWebview(activity, webView, isDebug)
             webview.userAgent = this.userAgent
+            webview.pOnReceivedSslError = this.pOnReceivedSslError
+            webview.pOnReceivedError = this.pOnReceivedError
+            webview.pOnReceivedErrorOld = this.pOnReceivedErrorOld
             return webview
         }
 
@@ -106,7 +115,7 @@ class FMWebview private constructor(
         webview.requestFocus()
         webview.isFocusable = true
         webview.isFocusableInTouchMode = true
-        webview.webViewClient = FMWebViewClient(activity, webview, log)
+        webview.webViewClient = FMWebViewClient(activity, this, log)
         webview.webChromeClient = FMChromeClient(log)
     }
 

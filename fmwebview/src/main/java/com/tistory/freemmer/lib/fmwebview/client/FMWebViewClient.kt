@@ -8,6 +8,7 @@ import android.net.Uri
 import android.net.http.SslError
 import android.os.Build
 import android.webkit.*
+import com.tistory.freemmer.lib.fmwebview.FMWebview
 import com.tistory.freemmer.lib.fmwebview.webinterface.FMWebInterfaceManager
 import com.tistory.freemmer.lib.libfm.logger.FMILog
 import java.net.URLDecoder
@@ -19,7 +20,7 @@ import java.net.URLDecoder
  */
 class FMWebViewClient constructor(
     private val context: Context,
-    private val webView: WebView,
+    private val fmWebView: FMWebview,
     private val log: FMILog?
 ): WebViewClient() {
 
@@ -55,7 +56,7 @@ class FMWebViewClient constructor(
         when (scheme) {
             SCHEME_WEB_INTERFACE -> {
                 log?.d("SCHEME_WEB_INTERFACE process > $scheme")
-                FMWebInterfaceManager.instance(context, webView, log).procWebInterface(uri.toString())
+                FMWebInterfaceManager.instance(context, fmWebView.webView, log).procWebInterface(uri.toString())
                 return true
             }
             SCHEME_OS_INTENT -> {
@@ -113,16 +114,22 @@ class FMWebViewClient constructor(
 
     override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
         super.onReceivedSslError(view, handler, error)
+        fmWebView.loadUrl("about:blank")
+        fmWebView.pOnReceivedSslError?.let { it(view, handler, error) }
     }
 
     @SuppressWarnings("deprecation")
     override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
         super.onReceivedError(view, errorCode, description, failingUrl)
+        fmWebView.loadUrl("about:blank")
+        fmWebView.pOnReceivedErrorOld?.let { it(view, errorCode, description, failingUrl) }
     }
 
     @TargetApi(android.os.Build.VERSION_CODES.M)
     override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
         super.onReceivedError(view, request, error)
+        fmWebView.loadUrl("about:blank")
+        fmWebView.pOnReceivedError?.let { it(view, request, error) }
     }
 
 }

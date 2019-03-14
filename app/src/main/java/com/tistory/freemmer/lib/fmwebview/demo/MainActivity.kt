@@ -7,14 +7,22 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
 import com.tistory.freemmer.lib.fmwebview.FMWebview
+import com.tistory.freemmer.lib.libfm.logger.FMILog
 import com.tistory.freemmer.lib.libfm.permission.FMCheckPermission
+import com.tistory.freemmer.lib.libfm.platform.FMBeanManager
 import com.tistory.freemmer.lib.libfm.util.FMDeviceUtil
+import com.tistory.freemmer.lib.libfm.widget.FMAlertDialog
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    private val log: FMILog? = FMBeanManager.getClass(FMILog::class.java)
 
     private var webview: FMWebview? = null
 
@@ -39,6 +47,13 @@ class MainActivity : AppCompatActivity() {
                         Build.VERSION.RELEASE,
                         Build.MODEL
                     )
+                    pOnReceivedError = onReceivedError
+                    pOnReceivedSslError = { view, handler, error ->
+                        log?.e("> pOnReceivedSslError")
+                    }
+                    pOnReceivedErrorOld = {view, errorCode, description, failingUrl ->
+                        log?.e("> pOnReceivedErrorOld")
+                    }
                 }.initialize()
                 webview?.loadUrl("file:///android_asset/sample.html")
             })
@@ -58,5 +73,22 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private var onReceivedError: ((view: WebView?, request: WebResourceRequest?, error: WebResourceError?) -> Unit)?
+            = { view, request, error ->
+        log?.e("> pOnReceivedError")
+        FMAlertDialog.build(this, "Error", "onReceivedError") {
+                pOkButton = {
+                    Snackbar.make(this@MainActivity.window.decorView.rootView
+                            , "Clicked OK!", Snackbar.LENGTH_SHORT).show()
+                    it.dismiss()
+                }
+                pCancelButton = {
+                    Snackbar.make(this@MainActivity.window.decorView.rootView
+                            , "Clicked CANCEL!", Snackbar.LENGTH_SHORT).show()
+                    it.dismiss()
+                }
+            }.show()
     }
 }
