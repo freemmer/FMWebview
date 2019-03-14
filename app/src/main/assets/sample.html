@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <style>
+    h1 {
+      color: white;
+      text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+    }
+    input[type=button], input[type=submit], input[type=reset] {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 16px 32px;
+      text-decoration: none;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+    div.item {
+      border-style: dotted;
+      border-width: 2px;
+      width: 350px;
+      padding: 10px;
+      word-break: break-all;
+    }
+    p {
+      font: 12px arial, sans-serif;
+    }
+    pre {
+      font: 12px arial, sans-serif;
+    }
+
+    </style>
+
+    <script>
+    function nativeResult(data) {
+        console.log("[Result] "+data);
+        document.getElementById('demo').innerHTML = data;
+    }
+    </script>
+
+</head>
+<body>
+
+<h1>Native Call Sample</h1>
+
+
+<div class="item">
+    <p class="category"># INTERFACE : CommonWebInterface</p>
+    <p class="command"># ACTION : getDeviceInfo</p>
+    <pre>
+# PARAMS:
+{
+	"COMMON": {
+		"APP_VERSION": "",
+		"ERROR_CODE": "",
+		"ERROR_MESSAGE": "",
+		"CALLBACK": "nativeResult"
+	}
+}
+</pre>
+    </br>
+    <input type="button" id="s" value="native call test"
+           onclick="window.location.href='nativecall://CommonWebInterface.getDeviceInfo?%7B%0A%09%22COMMON%22%3A%20%7B%0A%09%09%22APP_VERSION%22%3A%20%22%22%2C%0A%09%09%22ERROR_CODE%22%3A%20%22%22%2C%0A%09%09%22ERROR_MESSAGE%22%3A%20%22%22%2C%0A%09%09%22CALLBACK%22%3A%20%22nativeResult%22%0A%09%7D%0A%7D'">
+</div>
+
+<div class="item">
+    <p># Received from Native</p>
+    <p id="demo"></p>
+</div>
+
+</body>
+</html>
