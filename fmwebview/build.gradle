@@ -29,7 +29,7 @@ dependencies {
 
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api 'com.github.freemmer:libFM:1.2.6'
+    implementation 'com.github.freemmer:libFM:1.3.0'
 
     testImplementation 'junit:junit:4.12'
 
