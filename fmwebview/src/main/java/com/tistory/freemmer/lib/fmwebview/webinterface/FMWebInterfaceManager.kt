@@ -1,6 +1,6 @@
 package com.tistory.freemmer.lib.fmwebview.webinterface
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.webkit.WebView
@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference
  *    - 12/03/2019 Create file
  */
 class FMWebInterfaceManager constructor(
-    private val context: Context,
+    private val activity: Activity,
     private val webView: WebView,
     private val log: FMILog?
 ) {
@@ -32,10 +32,10 @@ class FMWebInterfaceManager constructor(
             classMap[cls.simpleName] = cls
         }
 
-        fun instance(context: Context, webView: WebView, log: FMILog?): FMWebInterfaceManager {
+        fun instance(activity: Activity, webView: WebView, log: FMILog?): FMWebInterfaceManager {
             if (weakReference?.get() == null) {
                 weakReference = WeakReference(
-                    FMWebInterfaceManager(context, webView, log)
+                    FMWebInterfaceManager(activity, webView, log)
                 )
             }
             return weakReference?.get()!!
@@ -67,7 +67,7 @@ class FMWebInterfaceManager constructor(
                 log?.e("Failed! create instance : ${map[KEY_INTERFACE]}")
                 return
             }
-            instance.initialize(context, webView, log)
+            instance.initialize(activity, webView, log)
             instance.execute(map.getValue(KEY_ACTION), params)
         } else {
             log?.e("Not registered class : ${map[KEY_INTERFACE]}")
@@ -77,10 +77,11 @@ class FMWebInterfaceManager constructor(
 
     fun procActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         for (item: Map.Entry<String, FMWebInterface> in instanceMap) {
-            if (item.value.getActivityResultRequestCode() == requestCode) {
-                item.value.onActivityResult(requestCode, resultCode, data)
-                return
-            }
+//            if (item.value.getActivityResultRequestCode() == requestCode) {
+//                item.value.onActivityResult(requestCode, resultCode, data)
+//                return
+//            }
+            item.value.onActivityResult(requestCode, resultCode, data)
         }
     }
 

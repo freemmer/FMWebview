@@ -2,11 +2,13 @@ package com.tistory.freemmer.lib.fmwebview
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Build
 import android.webkit.WebSettings
 import android.webkit.WebView
 import com.tistory.freemmer.lib.fmwebview.client.FMChromeClient
 import com.tistory.freemmer.lib.fmwebview.client.FMWebViewClient
+import com.tistory.freemmer.lib.fmwebview.webinterface.FMWebInterfaceManager
 import com.tistory.freemmer.lib.libfm.logger.FMILog
 import com.tistory.freemmer.lib.libfm.logger.impl.FMLogCatImpl
 import java.net.URLEncoder
@@ -23,6 +25,7 @@ class FMWebview private constructor(
 ) {
     private var log: FMILog? = null
     private var userAgent: String? = null
+    private var webInterfaceManager: FMWebInterfaceManager? = null
 
 
     companion object {
@@ -61,6 +64,8 @@ class FMWebview private constructor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 WebView.setWebContentsDebuggingEnabled(true)
             }
+            // FMWebInterfaceManager관련하여 버그 있을 수 있음
+            webInterfaceManager = FMWebInterfaceManager.instance(activity, webView, log)
         }
         setWebviewSetting(webView)
         return this
@@ -79,6 +84,10 @@ class FMWebview private constructor(
         }
         postData.deleteCharAt(postData.lastIndex)
         webView.postUrl(url, postData.toString().toByteArray())
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        webInterfaceManager?.procActivityResult(requestCode, resultCode, data)
     }
 
 
@@ -106,9 +115,11 @@ class FMWebview private constructor(
         webview.requestFocus()
         webview.isFocusable = true
         webview.isFocusableInTouchMode = true
-        webview.webViewClient = FMWebViewClient(activity, webview, log)
+        webview.webViewClient = FMWebViewClient(activity, webview, log) // FMWebInterfaceManager관련하여 버그 있을 수 있음
         webview.webChromeClient = FMChromeClient(log)
     }
+
+
 
 }
 

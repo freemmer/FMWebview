@@ -1,5 +1,6 @@
 package com.tistory.freemmer.lib.fmwebview.webinterface
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -13,12 +14,12 @@ import org.json.JSONObject
  *    - 12/03/2019 Create file
  */
 abstract class FMWebInterface {
-    lateinit var context: Context
+    lateinit var activity: Activity
     lateinit var webview: WebView
     private var libLog: FMILog? = null
 
-    fun initialize(context: Context, view: WebView, log: FMILog?) {
-        this.context = context
+    fun initialize(activity: Activity, view: WebView, log: FMILog?) {
+        this.activity = activity
         this.webview = view
         this.libLog = log
     }

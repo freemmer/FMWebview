@@ -26,6 +26,7 @@ class FMChromeClient constructor(
 
     override fun onJsAlert(view: WebView, url: String, message: String, result: JsResult): Boolean {
         log?.d("JS alert: URL($url) Message($message)")
+        result.confirm();
         return true
     }
 

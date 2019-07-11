@@ -1,7 +1,7 @@
 package com.tistory.freemmer.lib.fmwebview.client
 
 import android.annotation.TargetApi
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -18,7 +18,7 @@ import java.net.URLDecoder
  *    - 12/03/2019 Create file
  */
 class FMWebViewClient constructor(
-    private val context: Context,
+    private val activity: Activity,
     private val webView: WebView,
     private val log: FMILog?
 ): WebViewClient() {
@@ -55,37 +55,37 @@ class FMWebViewClient constructor(
         when (scheme) {
             SCHEME_WEB_INTERFACE -> {
                 log?.d("SCHEME_WEB_INTERFACE process > $scheme")
-                FMWebInterfaceManager.instance(context, webView, log).procWebInterface(uri.toString())
+                FMWebInterfaceManager.instance(activity, webView, log).procWebInterface(uri.toString())
                 return true
             }
             SCHEME_OS_INTENT -> {
                 log?.d("SCHEME_OS_INTENT process > $scheme")
                 val intent = Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME)
-                val existPackage = context.packageManager.getLaunchIntentForPackage(intent.`package`)
+                val existPackage = activity.packageManager.getLaunchIntentForPackage(intent.`package`)
                 if (existPackage != null) {
-                    context.startActivity(intent)
+                    activity.startActivity(intent)
                 } else {
                     val marketIntent = Intent(Intent.ACTION_VIEW)
                     marketIntent.data = uri
-                    context.startActivity(marketIntent)
+                    activity.startActivity(marketIntent)
                 }
                 return true
             }
             SCHEME_OS_MARKET -> {
                 log?.d("SCHEME_OS_MARKET process > $scheme")
-                context.startActivity(Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME))
+                activity.startActivity(Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME))
                 return true
             }
             SCHEME_OS_TEL -> {
                 log?.d("SCHEME_OS_TEL process > $scheme")
                 val intent = Intent(Intent.ACTION_DIAL)
                 intent.data = uri
-                context.startActivity(intent)
+                activity.startActivity(intent)
                 return true
             }
             SCHEME_OS_SMS, SCHEME_OS_MAILTO -> {
                 log?.d("SCHEME_OS_SMS, SCHEME_OS_MAILTO process > $scheme")
-                context.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse(uri.toString())))
+                activity.startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse(uri.toString())))
                 return true
             }
         }
