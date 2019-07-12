@@ -36,7 +36,6 @@ abstract class FMWebInterface {
     }
 
     abstract fun execute(action: String, params: JSONObject?)
-    abstract fun getActivityResultRequestCode() : Int
     abstract fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
 
 }

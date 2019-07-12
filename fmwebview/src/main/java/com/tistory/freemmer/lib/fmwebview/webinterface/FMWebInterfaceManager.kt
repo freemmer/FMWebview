@@ -42,7 +42,8 @@ class FMWebInterfaceManager constructor(
         }
     }
 
-    val instanceMap = HashMap<String, FMWebInterface>()
+    private val instanceMap = HashMap<String, FMWebInterface>()
+    private var currentInstance: FMWebInterface? = null
 
     fun addWebInterface(cls: Class<*>) {
         classMap[cls.simpleName] = cls
@@ -62,27 +63,25 @@ class FMWebInterfaceManager constructor(
 
         if (classMap[map[KEY_INTERFACE]] != null) {
             val params = JSONObject(map[KEY_PARAMS])
-            val instance: FMWebInterface? = getWebInstance(classMap[map[KEY_INTERFACE]]!!)
-            if (instance == null) {
+            currentInstance = getWebInstance(classMap[map[KEY_INTERFACE]]!!)
+            if (currentInstance == null) {
                 log?.e("Failed! create instance : ${map[KEY_INTERFACE]}")
                 return
             }
-            instance.initialize(activity, webView, log)
-            instance.execute(map.getValue(KEY_ACTION), params)
+            currentInstance?.initialize(activity, webView, log)
+            currentInstance?.execute(map.getValue(KEY_ACTION), params)
         } else {
             log?.e("Not registered class : ${map[KEY_INTERFACE]}")
             return
         }
     }
 
+
     fun procActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        for (item: Map.Entry<String, FMWebInterface> in instanceMap) {
-//            if (item.value.getActivityResultRequestCode() == requestCode) {
-//                item.value.onActivityResult(requestCode, resultCode, data)
-//                return
-//            }
+        currentInstance?.onActivityResult(requestCode, resultCode, data)
+        /*for (item: Map.Entry<String, FMWebInterface> in instanceMap) {
             item.value.onActivityResult(requestCode, resultCode, data)
-        }
+        }*/
     }
 
 
