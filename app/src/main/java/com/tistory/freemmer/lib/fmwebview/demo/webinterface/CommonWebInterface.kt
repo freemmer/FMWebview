@@ -26,26 +26,22 @@ class CommonWebInterface : FMWebInterface() {
         val paramObj = Gson().fromJson(params.toString(), JS_COMMON::class.java)
         when (action) {
             "getDeviceInfo" -> {
-                paramObj.COMMON?.APP_VERSION = FMDeviceUtil.instance(context).getAppVersion()
+                paramObj.COMMON?.APP_VERSION = FMDeviceUtil.instance(activity).getAppVersion()
                 paramObj.COMMON?.ERROR_CODE = "0"
 
                 val resp = JS_RES_DEVICE_INFO()
                 resp.COMMON = paramObj.COMMON
-                resp.UDID = FMDeviceUtil.instance(context).getUDID()
-                resp.OS_VERSION = FMDeviceUtil.instance(context).getOSVersion()
-                resp.MANUFACTURER = FMDeviceUtil.instance(context).getManufacture()
-                resp.BRAND = FMDeviceUtil.instance(context).getBrand()
-                resp.PRODUCT = FMDeviceUtil.instance(context).getProductName()
-                resp.MODEL = FMDeviceUtil.instance(context).getModelName()
+                resp.UDID = FMDeviceUtil.instance(activity).getUDID()
+                resp.OS_VERSION = FMDeviceUtil.instance(activity).getOSVersion()
+                resp.MANUFACTURER = FMDeviceUtil.instance(activity).getManufacture()
+                resp.BRAND = FMDeviceUtil.instance(activity).getBrand()
+                resp.PRODUCT = FMDeviceUtil.instance(activity).getProductName()
+                resp.MODEL = FMDeviceUtil.instance(activity).getModelName()
                 if (paramObj.COMMON?.CALLBACK != null) {
                     executeJs(paramObj.COMMON?.CALLBACK!!, Gson().toJson(resp, JS_RES_DEVICE_INFO::class.java))
                 }
             }
         }
-    }
-
-    override fun getActivityResultRequestCode() : Int {
-        return REQUEST_CODE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

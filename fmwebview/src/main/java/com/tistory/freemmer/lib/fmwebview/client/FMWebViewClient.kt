@@ -61,7 +61,7 @@ class FMWebViewClient constructor(
             SCHEME_OS_INTENT -> {
                 log?.d("SCHEME_OS_INTENT process > $scheme")
                 val intent = Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME)
-                val existPackage = activity.packageManager.getLaunchIntentForPackage(intent.`package`)
+                val existPackage = intent.`package`?.let { activity.packageManager.getLaunchIntentForPackage(it) }
                 if (existPackage != null) {
                     activity.startActivity(intent)
                 } else {
