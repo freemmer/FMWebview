@@ -1,5 +1,6 @@
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 [![](https://jitpack.io/v/freemmer/FMWebview.svg)](https://jitpack.io/#freemmer/FMWebview)
+[![CircleCI](https://circleci.com/gh/freemmer/FMWebview.svg?style=svg)](https://circleci.com/gh/freemmer/FMWebview)
 
 # FMWebview
 Webview For Hybrid or Web app on Android (Kotlin)
