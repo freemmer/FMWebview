@@ -12,7 +12,13 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+        classpath 'org.ow2.asm:asm:6.2' // https://github.com/jacoco/jacoco/issues/639#issuecomment-355424756
+        classpath 'org.jacoco:org.jacoco.core:0.8.0'
     }
+}
+
+plugins {
+    id 'com.github.spotbugs' version '1.6.4'
 }
 
 allprojects {
@@ -20,9 +26,27 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://oss.sonatype.org/content/groups/public' }
+        maven { url 'https://staging.dev.medicmobile.org/_couch/maven-repo' }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+configurations.all {
+    transitive = true
+}
+
+task checkAll(type: GradleBuild) {
+    tasks = ['checkCode', 'checkTests']
+}
+
+task checkCode(type: GradleBuild) {
+    tasks = ['pmd', 'checkstyle', 'lintDebug', 'spotbugs']
+}
+
+task checkTests(type: GradleBuild) {
+    tasks = ['testDebugUnitTest', 'connectedDebugAndroidTest']
 }
